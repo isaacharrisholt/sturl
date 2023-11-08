@@ -14,23 +14,24 @@ pnpm i -D sturl
 
 ```svelte
 <script lang="ts">
-  import { page } from '$app/stores'
-  import { sturled } from 'sturl'
-  import { z } from 'zod'
+	import { page } from '$app/stores'
+	import { sturled } from 'sturl'
+	import { z } from 'zod'
 
-  const schema = z.object({
-    name: z.string(),
-    age: z.coerce.number().int().positive(), // Use .coerce for non-string types
-  });
+	const schema = z.object({
+		name: z.string(),
+		age: z.coerce.number().int().positive(), // Use .coerce for non-string types
+	})
 
-  const urlState = sturled(
-    schema,
-    $page.url, // Optional default state, will otherwise use current location
-    { // Additional options, mostly the same as `goto`
-      ignoreFalsey: true, // Ignore falsey values when serializing (converted to undefined)
-      keepFocus: true, // Keep focus on the element that triggered the update
-    }
-  );
+	const urlState = sturled(
+		schema,
+		$page.url, // Optional default state, will otherwise use current location
+		{
+			// Additional options, mostly the same as `goto`
+			ignoreFalsey: true, // Ignore falsey values when serializing (converted to undefined)
+			keepFocus: true, // Keep focus on the element that triggered the update
+		},
+	)
 </script>
 
 <input type="text" bind:value={$urlState.name} />
