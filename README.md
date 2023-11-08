@@ -1,58 +1,56 @@
-# create-svelte
+# Sturl
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Sturl is a URL state management library for SvelteKit with Zod validation.
 
-Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+## Installation
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+pnpm i -D sturl
 ```
 
-## Developing
+(or `npm`, `yarn`, `bun`, etc.)
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Usage
 
-```bash
-npm run dev
+```svelte
+<script lang="ts">
+  import { page } from '$app/stores'
+  import { sturled } from 'sturl'
+  import { z } from 'zod'
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+  const schema = z.object({
+    name: z.string(),
+    age: z.coerce.number().int().positive(), // Use .coerce for non-string types
+  });
+
+  const urlState = sturled(
+    schema,
+    $page.url, // Optional default state, will otherwise use current location
+    { // Additional options, mostly the same as `goto`
+      ignoreFalsey: true, // Ignore falsey values when serializing (converted to undefined)
+      keepFocus: true, // Keep focus on the element that triggered the update
+    }
+  );
+</script>
+
+<input type="text" bind:value={$urlState.name} />
+<input type="number" bind:value={$urlState.age} />
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+See more examples on the [default page](./src/routes/+page.svelte).
 
-## Building
+## API
 
-To build your library:
+#### `sturled<T extends AnyZodObject>(schema: T, url?: URL | string, opts?: SturlOptions): Sturl<T>`
 
-```bash
-npm run package
-```
+Creates a new `Sturl` object. A `Sturl` object is a Svelte store that can be used to read and write URL state.
 
-To create a production version of your showcase app:
+Includes validation with [Zod](https://zod.dev). Any invalid properties will be ignored.
 
-```bash
-npm run build
-```
+## Contributing
 
-You can preview the production build with `npm run preview`.
+Contributions are welcome! Please open an issue or submit a pull request.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## License
 
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
-```
+[MIT](./LICENSE)

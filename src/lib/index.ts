@@ -1,8 +1,14 @@
-import { writable } from 'svelte/store'
+import { writable, type Writable } from 'svelte/store'
 import { goto } from '$app/navigation'
 import { browser } from '$app/environment'
 
 import type { z, AnyZodObject, ZodSchema } from 'zod'
+
+type SturlOptions = Parameters<typeof goto>[1] & { ignoreFalsey?: boolean }
+type Sturl<T extends AnyZodObject> = Pick<
+	Writable<Partial<z.infer<T>>>,
+	'subscribe' | 'set'
+>
 
 /**
  * Get an object from the URL query string.
@@ -40,11 +46,17 @@ function getValidObject<T extends AnyZodObject>(
 	return newObj
 }
 
+/**
+ * Create a Sturl - a Svelte store that syncs with the URL query string.
+ * @param schema Zod schema to validate URL state against
+ * @param url Optional default state. Will use current URL if not provided.
+ * @param opts Options object. Mostly shares options with goto, with additional `ignoreFalsey` option.
+ */
 export function sturled<T extends AnyZodObject>(
 	schema: T,
 	url?: URL | string,
-	opts: Parameters<typeof goto>[1] & { ignoreFalsey?: boolean } = {},
-) {
+	opts: SturlOptions = {},
+): Sturl<T> {
 	const initialValue = getValidObject(schema, getObjectFromUrl(url))
 
 	const { subscribe, set } = writable<Partial<z.infer<T>>>(initialValue)
