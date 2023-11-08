@@ -13,7 +13,7 @@ jobs:
       matrix:
         node: [16, 18]
 
-    name: Node ${{ matrix.node }} sample
+    name: Node ${{ matrix.node }} tests
     steps:
       - uses: actions/checkout@v3
       - name: Run linting rules and tests
