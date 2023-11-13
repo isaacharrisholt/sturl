@@ -4,20 +4,12 @@
 	import { sturled } from '$lib/index.js'
 	import Nav from '$lib/_components/Nav.svelte'
 
-	const sizes = ['small', 'medium', 'large'] as const
 	const schema = z.object({
 		name: z.string(),
 	})
 	const url = sturled(schema, $page.url, {
 		passthrough: true,
 	})
-
-	let searchString: string
-
-	const routes = {
-		Home: '/',
-		Passthrough: '/passthrough',
-	}
 </script>
 
 <Nav />
