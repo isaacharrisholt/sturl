@@ -4,7 +4,11 @@ import { browser } from '$app/environment'
 
 import type { z, AnyZodObject, ZodSchema } from 'zod'
 
-type SturlOptions = Parameters<typeof goto>[1] & { ignoreFalsey?: boolean }
+type GotoOptions = Parameters<typeof goto>[1]
+type SturlOptions = {
+	ignoreFalsey?: boolean
+	passthrough?: boolean
+} & GotoOptions
 type Sturl<T extends AnyZodObject> = Pick<
 	Writable<Partial<z.infer<T>>>,
 	'subscribe' | 'set'
@@ -47,6 +51,20 @@ function getValidObject<T extends AnyZodObject>(
 }
 
 /**
+ * Filter out specified keys from an object.
+ * @param obj Object to filter
+ * @param keys Keys to filter out
+ */
+function filterKeys<T extends Record<string, unknown>>(
+	obj: T,
+	keys: Array<keyof T>,
+): Partial<T> {
+	return Object.fromEntries(
+		Object.entries(obj).filter(([key]) => !keys.includes(key as keyof T)),
+	) as Partial<T>
+}
+
+/**
  * Create a Sturl - a Svelte store that syncs with the URL query string.
  * @param schema Zod schema to validate URL state against
  * @param url Optional default state. Will use current URL if not provided.
@@ -64,8 +82,13 @@ export function sturled<T extends AnyZodObject>(
 	return {
 		subscribe,
 		set: (value: Partial<z.infer<T>>) => {
+			const current = getObjectFromUrl()
 			const newObj = getValidObject(schema, value, opts?.ignoreFalsey)
-			const params = new URLSearchParams(newObj as Record<string, string>)
+			let newParamsObj = newObj
+			if (opts.passthrough) {
+				newParamsObj = { ...filterKeys(current, Object.keys(schema.shape)), ...newObj }
+			}
+			const params = new URLSearchParams(newParamsObj as Record<string, string>)
 			goto(`?${params.toString()}`, opts)
 			set(newObj)
 		},
