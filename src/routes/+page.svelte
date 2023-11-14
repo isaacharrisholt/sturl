@@ -10,6 +10,7 @@
 		q: z.string(),
 		read: z.string(),
 		number: z.coerce.number(),
+		list: z.array(z.string()),
 	})
 	const url = sturled(schema, $page.url, {
 		invalidateAll: false,
@@ -67,6 +68,13 @@
 			Read example with validation (add <code>number=120</code> to the URL params!)
 		</h3>
 		<p>{$url.number ?? 'Nothing here or invalid number'}</p>
+	</div>
+
+	<div>
+		<h3>Array example</h3>
+		<button on:click={() => ($url.list = ['a', 'b', 'c'])}>Set</button>
+		<button on:click={() => ($url.list = [])}>Empty</button>
+		<button on:click={() => ($url.list = undefined)}>Unset</button>
 	</div>
 </main>
 

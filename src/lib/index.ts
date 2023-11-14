@@ -65,6 +65,20 @@ function filterKeys<T extends Record<string, unknown>>(
 }
 
 /**
+ * Create a URLSearchParams object from any JS object.
+ * @param obj Object to transform
+ */
+function objectToParams(obj: object) {
+	const entries = Object.entries(obj).flatMap(([k, v]) => {
+		if (!Array.isArray(v)) {
+			return [[k, v]]
+		}
+		return v.map((val) => [k, val])
+	})
+	return new URLSearchParams(entries)
+}
+
+/**
  * Create a Sturl - a Svelte store that syncs with the URL query string.
  * @param schema Zod schema to validate URL state against
  * @param url Optional default state. Will use current URL if not provided.
@@ -88,7 +102,7 @@ export function sturled<T extends AnyZodObject>(
 			if (opts.passthrough) {
 				newParamsObj = { ...filterKeys(current, Object.keys(schema.shape)), ...newObj }
 			}
-			const params = new URLSearchParams(newParamsObj as Record<string, string>)
+			const params = objectToParams(newParamsObj)
 			goto(`?${params.toString()}`, opts)
 			set(newObj)
 		},
