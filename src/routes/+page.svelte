@@ -2,7 +2,6 @@
 	import { page } from '$app/stores'
 	import { z } from 'zod'
 	import { sturled } from '$lib/index.js'
-	import Nav from '$lib/_components/Nav.svelte'
 
 	const sizes = ['small', 'medium', 'large'] as const
 	const schema = z.object({
@@ -20,8 +19,6 @@
 
 	let searchString: string
 </script>
-
-<Nav />
 
 <main>
 	<div>

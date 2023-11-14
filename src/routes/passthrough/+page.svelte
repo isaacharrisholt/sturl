@@ -2,23 +2,18 @@
 	import { page } from '$app/stores'
 	import { z } from 'zod'
 	import { sturled } from '$lib/index.js'
-	import Nav from '$lib/_components/Nav.svelte'
 
 	const schema = z.object({
 		name: z.string(),
 	})
-	const url = sturled(schema, $page.url, {
-		passthrough: true,
-	})
+	const url = sturled(schema, $page.url, { passthrough: true })
 </script>
-
-<Nav />
 
 <main>
 	<div>
 		<h1>Passthrough</h1>
 
-		<h2>Invalid params will not be removed</h2>
+		<h2>Non-schema params will not be removed</h2>
 		<button on:click={() => ($url = {})}>Reset everything</button>
 	</div>
 
