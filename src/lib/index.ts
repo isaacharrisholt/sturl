@@ -12,21 +12,36 @@ type SturlOptions = {
 type Sturl<T extends AnyZodObject> = Pick<
 	Writable<Partial<z.infer<T>>>,
 	'subscribe' | 'set'
->
+> & {
+	toQueryString: () => string
+}
 
 /**
  * Get an object from the URL query string.
  * @param url Optional URL to parse. If not provided, will use the current URL.
  * @returns object
  */
-function getObjectFromUrl(url?: URL | string): Record<string, string> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getObjectFromUrl(url?: URL | string): Record<string, any> {
 	const defaultUrl = url
 		? new URL(url)
 		: browser
 		? new URL(window.location.href)
 		: undefined
 	const params = new URLSearchParams(defaultUrl?.searchParams)
-	return Object.fromEntries(params.entries())
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const entries = {} as any
+	for (const [key, value] of params.entries()) {
+		if (key in entries) {
+			if (!Array.isArray(entries[key])) {
+				entries[key] = [entries[key]]
+			}
+			entries[key].push(value)
+		} else {
+			entries[key] = value
+		}
+	}
+	return entries
 }
 
 function getValidObject<T extends AnyZodObject>(
@@ -105,6 +120,11 @@ export function sturled<T extends AnyZodObject>(
 			const params = objectToParams(newParamsObj)
 			goto(`?${params.toString()}`, opts)
 			set(newObj)
+		},
+		toQueryString: () => {
+			const current = getObjectFromUrl()
+			const newObj = getValidObject(schema, current, opts?.ignoreFalsey)
+			return objectToParams(newObj).toString()
 		},
 	}
 }

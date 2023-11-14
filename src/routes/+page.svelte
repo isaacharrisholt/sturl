@@ -19,6 +19,8 @@
 	})
 
 	let searchString: string
+
+	let queryString: string
 </script>
 
 <main>
@@ -72,9 +74,19 @@
 
 	<div>
 		<h3>Array example</h3>
+		{JSON.stringify($url.list)}
+		<br />
 		<button on:click={() => ($url.list = ['a', 'b', 'c'])}>Set</button>
 		<button on:click={() => ($url.list = [])}>Empty</button>
 		<button on:click={() => ($url.list = undefined)}>Unset</button>
+	</div>
+
+	<div>
+		<h3><code>url.toQueryString()</code></h3>
+		<p>{JSON.stringify(queryString)}</p>
+		<button on:click={() => (queryString = url.toQueryString())}
+			>Update query string</button
+		>
 	</div>
 </main>
 
