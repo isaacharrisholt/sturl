@@ -26,8 +26,8 @@ function getObjectFromUrl(url?: URL | string): Record<string, any> {
 	const defaultUrl = url
 		? new URL(url)
 		: browser
-		? new URL(window.location.href)
-		: undefined
+			? new URL(window.location.href)
+			: undefined
 	const params = new URLSearchParams(defaultUrl?.searchParams)
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const entries = {} as any
@@ -118,7 +118,7 @@ export function sturled<T extends AnyZodObject>(
 				newParamsObj = { ...filterKeys(current, Object.keys(schema.shape)), ...newObj }
 			}
 			const params = objectToParams(newParamsObj)
-			goto(`?${params.toString()}`, opts)
+			browser && goto(`?${params.toString()}`, opts)
 			set(newObj)
 		},
 		toQueryString: () => {
