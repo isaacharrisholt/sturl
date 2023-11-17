@@ -77,6 +77,7 @@
 		{JSON.stringify($url.list)}
 		<br />
 		<button on:click={() => ($url.list = ['a', 'b', 'c'])}>Set</button>
+		<button on:click={() => ($url.list = ['a'])}>Set single element</button>
 		<button on:click={() => ($url.list = [])}>Empty</button>
 		<button on:click={() => ($url.list = undefined)}>Unset</button>
 	</div>

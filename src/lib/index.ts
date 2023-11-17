@@ -2,7 +2,8 @@ import { writable, type Writable } from 'svelte/store'
 import { goto } from '$app/navigation'
 import { browser } from '$app/environment'
 
-import type { z, AnyZodObject, ZodSchema } from 'zod'
+import type { AnyZodObject, ZodSchema } from 'zod'
+import { z, ZodArray } from 'zod'
 
 type GotoOptions = Parameters<typeof goto>[1]
 type SturlOptions = {
@@ -56,7 +57,11 @@ function getValidObject<T extends AnyZodObject>(
 		// Only add value to object if it's not undefined
 		// or if ignoreFalsey is false and value is not falsey
 		if (value || (!ignoreFalsey && value !== undefined)) {
-			const result = (s as ZodSchema).safeParse(value)
+			let valueToParse: unknown = value
+			if ((s as ZodSchema) instanceof ZodArray && !Array.isArray(value)) {
+				valueToParse = [value]
+			}
+			const result = (s as ZodSchema).safeParse(valueToParse)
 			if (result.success) {
 				newObj[key as keyof typeof newObj] = result.data
 			}
