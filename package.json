@@ -1,6 +1,6 @@
 {
 	"name": "sturl",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
@@ -25,8 +25,8 @@
 		"!dist/**/*.spec.*"
 	],
 	"peerDependencies": {
-		"svelte": "^3.45.0 || ^4.0.0",
-		"@sveltejs/kit": "^1"
+		"svelte": "3.x || 4.x",
+		"@sveltejs/kit": "1.x || 2.x"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
